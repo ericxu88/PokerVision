@@ -27,7 +27,7 @@ def _straight_high(sorted_unique_vals_asc: List[int]) -> int | None:
 
 # evaluate 5-card hand
 def rank5(cards5: List[Card]) -> tuple:
-    if len(card5) != 5:
+    if len(cards5) != 5:
         raise ValueError("Expected exactly 5 cards")
     
     vals = [v for v, _ in cards5]
