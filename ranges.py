@@ -15,14 +15,14 @@ def _all_nonpair_combos(vhi: int, vlo: int, suited_flag: Optional[bool]) -> List
     #suited_flag is True for suited only, False for offsuit only, None for both
     out: List[Tuple[Card, Card]] = []
     if suited_flag is None:
-        if suited_flag is None:
-            out.extend(_all_nonpair_combos(vhi, vlo, True))
-            out.extend(_all_nonpair_combos(vhi, vlo, False))
-            return out
-        if suited_flag:
-            for s in SUITS:
-                out.append(((vhi, s), (vlo, s)))
-            return out
+        out.extend(_all_nonpair_combos(vhi, vlo, True))
+        out.extend(_all_nonpair_combos(vhi, vlo, False))
+        return out
+
+    if suited_flag:
+        for s in SUITS:
+            out.append(((vhi, s), (vlo, s)))
+        return out
     #offsuit
     for s1 in SUITS:
         for s2 in SUITS:
@@ -110,11 +110,11 @@ def range_to_combos(range_list: List[str], exclude: Iterable[Card] = ()) -> List
                     combo = (c2, c1)
                 else:
                     combo = (c1, c2)
-                combos.append(combo)
+                out.append(combo)
 
     seen = set()
     unique: List[Tuple[Card, Card]] = []
-    for combo in combos:
+    for combo in out:
         if combo not in seen: 
             seen.add(combo)
             unique.append(combo)
