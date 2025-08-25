@@ -69,6 +69,6 @@ def equity_hu_exact(hero_hole: List[Card], villain_hole: List[Card], board_parti
     if Total == 0:
         equity = 0.0
     else: 
-        (Wins + 0.5 * Ties) / Total
+        equity = (Wins + 0.5 * Ties) / Total
 
     return {"equity": equity, "wins": Wins, "ties": Ties, "total": Total}
