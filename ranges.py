@@ -72,3 +72,50 @@ def _expand_token(token: str) -> List[Tuple[str, int, int, Optional[bool]]]:
         lows = [v2]
     return [("nonpair", v1, lo, suited_flag) for lo in lows]
 
+def parse_range_tokens(range_list: List[str]) -> List[str]:
+    # validate and normalize list of tokens
+    out: List[str] = []
+    seen = set()
+    for token in range_list:
+        token = token.strip()
+        if not token or token in seen:
+            continue
+        if _expand_token(token):
+            out.append(token)
+            seen.add(token)
+        else:
+            raise ValueError(f"Invalid token '{token}' in range")
+    return out
+
+def range_to_combos(range_list: List[str], exclude: Iterable[Card] = ()) -> List[Tuple[Card, Card]]:
+    # convert range tokens to list of card pairs
+    # exclude is for excluding cards on the table
+    exclude_set = set(exclude)
+    out: List[Tuple[Card, Card]] = []
+    for token in parse_range_tokens(range_list):
+        specs = _expand_token(token)
+        for kind, vhi, vlo, suited_flag in specs:
+            if kind == "pair":
+                combos = _all_pair_combos(vhi)
+            elif kind == "nonpair":
+                combos = _all_nonpair_combos(vhi, vlo, suited_flag)
+            else:
+                raise ValueError(f"Unknown kind '{kind}' in token '{token}'")
+            
+            for c1, c2 in combos:
+                if c1 in exclude_set or c2 in exclude_set:
+                    continue
+                #normalize order for dedup
+                if (c2[0] > c1[0]) or (c2[0] == c1[0] and c2[1] > c1[1]):
+                    combo = (c2, c1)
+                else:
+                    combo = (c1, c2)
+                combos.append(combo)
+
+    seen = set()
+    unique: List[Tuple[Card, Card]] = []
+    for combo in combos:
+        if combo not in seen: 
+            seen.add(combo)
+            unique.append(combo)
+    return unique
